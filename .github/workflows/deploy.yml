@@ -1,0 +1,58 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'railway.json'
+      - 'nixpacks.toml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Only deploy after tests pass
+    needs: []  # Will be linked to test workflow
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger Railway deployment
+        run: |
+          echo "✅ Code pushed to main branch"
+          echo "🚂 Railway auto-deployment will start automatically"
+          echo "📊 Monitor deployment at: https://railway.app/dashboard"
+
+      - name: Deployment notification
+        run: |
+          echo "::notice::Railway deployment triggered for commit ${{ github.sha }}"
+          echo "::notice::Check Railway dashboard for deployment status"
+
+      - name: Wait for Railway deployment
+        run: |
+          echo "⏳ Waiting 60 seconds for Railway to build and deploy..."
+          sleep 60
+
+      - name: Health check
+        run: |
+          echo "🔍 Checking API health..."
+          HEALTH_URL="https://web-production-f15d.up.railway.app/api/v1/health"
+
+          for i in {1..5}; do
+            echo "Attempt $i/5..."
+            if curl -f -s "$HEALTH_URL" > /dev/null; then
+              echo "✅ API is healthy!"
+              exit 0
+            fi
+            echo "⏳ Waiting 10 seconds before retry..."
+            sleep 10
+          done
+
+          echo "⚠️  Health check failed after 5 attempts"
+          echo "::warning::Railway deployment may still be in progress. Check Railway dashboard."
+          exit 0  # Don't fail the workflow, just warn

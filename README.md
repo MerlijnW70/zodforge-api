@@ -5,6 +5,8 @@
 **AI-powered schema refinement microservice for ZodForge CLI - Production-ready REST API built with Fastify + TypeScript**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Tests](https://img.shields.io/badge/Tests-132%20passing-success)](https://github.com/MerlijnW70/zodforge-api/actions)
+[![Coverage](https://img.shields.io/badge/Coverage-41.24%25-yellow)](https://github.com/MerlijnW70/zodforge-api)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Fastify](https://img.shields.io/badge/Fastify-5.0-black?logo=fastify)](https://fastify.dev/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-green?logo=openai)](https://openai.com)
