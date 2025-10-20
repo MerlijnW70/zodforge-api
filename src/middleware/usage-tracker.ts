@@ -165,6 +165,14 @@ export async function usageMiddleware(
     // Log the failed attempt
     await trackUsage(apiKey, endpoint, false, Date.now() - startTime);
 
+    // Add rate limit headers to 429 response
+    const resetTimestamp = Math.floor(new Date(usage.resetDate).getTime() / 1000);
+    reply.header('X-RateLimit-Limit', usage.limit.toString());
+    reply.header('X-RateLimit-Remaining', '0');
+    reply.header('X-RateLimit-Reset', resetTimestamp.toString());
+    reply.header('X-RateLimit-Used', usage.requestsThisMonth.toString());
+    reply.header('Retry-After', resetTimestamp.toString());
+
     reply.status(429).send({
       error: 'Rate Limit Exceeded',
       message: `You have exceeded your ${usage.tier} plan limit of ${usage.limit} requests per month`,
@@ -181,6 +189,13 @@ export async function usageMiddleware(
 
   // Add usage info to request object for use in route handlers
   (request as any).usage = usage;
+
+  // Add standard rate limit headers to response
+  const resetTimestamp = Math.floor(new Date(usage.resetDate).getTime() / 1000);
+  reply.header('X-RateLimit-Limit', usage.limit.toString());
+  reply.header('X-RateLimit-Remaining', usage.remaining.toString());
+  reply.header('X-RateLimit-Reset', resetTimestamp.toString());
+  reply.header('X-RateLimit-Used', usage.requestsThisMonth.toString());
 
   // Track usage after response is sent (using onResponse hook)
   request.server.addHook('onResponse', async (req: any, rep: any) => {
