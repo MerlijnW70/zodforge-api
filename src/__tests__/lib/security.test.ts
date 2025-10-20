@@ -163,5 +163,68 @@ describe('Security Utilities', () => {
       const result = limiter.checkLimit(identifier);
       expect(result.allowed).toBe(false);
     });
+
+    it('should handle different identifiers independently', () => {
+      const limiter = rateLimiter;
+      const user1 = 'test-user-5';
+      const user2 = 'test-user-6';
+
+      limiter.checkLimit(user1);
+      limiter.checkLimit(user1);
+      limiter.checkLimit(user1);
+
+      const result1 = limiter.checkLimit(user1);
+      const result2 = limiter.checkLimit(user2);
+
+      // user2 should have full quota since it's independent
+      expect(result2.remaining).toBeGreaterThan(result1.remaining);
+    });
+
+    it('should return correct resetTime format', () => {
+      const limiter = rateLimiter;
+      const identifier = 'test-user-7';
+
+      const result = limiter.checkLimit(identifier);
+
+      expect(typeof result.resetTime).toBe('number');
+      expect(result.resetTime).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle empty string as API key', () => {
+      const result = validateApiKeyFormat('');
+
+      expect(result.valid).toBe(false);
+      expect(result.error).toBeDefined();
+    });
+
+    it('should handle null as API key', () => {
+      const result = validateApiKeyFormat(null as any);
+
+      expect(result.valid).toBe(false);
+    });
+
+    it('should handle API key with only prefix', () => {
+      const key = 'sk-';
+      const result = validateApiKeyFormat(key);
+
+      expect(result.valid).toBe(false);
+    });
+
+    it('should handle very long API keys', () => {
+      const key = 'sk-proj-' + 'a'.repeat(200);
+      const result = validateApiKeyFormat(key);
+
+      expect(result.valid).toBe(true);
+    });
+
+    it('should hash empty string consistently', () => {
+      const hash1 = hashApiKey('');
+      const hash2 = hashApiKey('');
+
+      expect(hash1).toBe(hash2);
+      expect(hash1).toHaveLength(64);
+    });
   });
 });
