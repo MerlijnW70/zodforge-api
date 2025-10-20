@@ -5,6 +5,7 @@ import helmet from '@fastify/helmet';
 import { env, getMaskedEnv } from './config/env.js';
 import { healthRoute } from './routes/health.js';
 import { refineRoute } from './routes/refine.js';
+import { usageRoute } from './routes/usage.js';
 import { securityAuditor } from './lib/security.js';
 
 const server = Fastify({
@@ -43,6 +44,7 @@ await server.register(cors, {
 // Routes
 await server.register(healthRoute, { prefix: '/api/v1' });
 await server.register(refineRoute, { prefix: '/api/v1' });
+await server.register(usageRoute, { prefix: '/api/v1' });
 
 // Root endpoint
 server.get('/', async (_request, _reply) => {
@@ -113,6 +115,7 @@ const start = async () => {
 ║   GET  /                       - API info                 ║
 ║   GET  /api/v1/health          - Health check             ║
 ║   POST /api/v1/refine          - Schema refinement (🔒)   ║
+║   GET  /api/v1/usage           - Usage statistics (🔒)    ║
 ║                                                           ║
 ║   Security:                                               ║
 ║   🔐 OpenAI API Key:  Protected ✓                         ║

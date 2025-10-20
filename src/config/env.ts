@@ -57,6 +57,17 @@ const envSchema = z.object({
       { message: 'Invalid Anthropic API key format' }
     ),
 
+  // Supabase (for usage tracking and customer management)
+  SUPABASE_URL: z
+    .string()
+    .url('Supabase URL must be a valid URL')
+    .optional(),
+
+  SUPABASE_SERVICE_KEY: z
+    .string()
+    .min(100, 'Supabase service key must be at least 100 characters')
+    .optional(),
+
   // Optional security settings
   RATE_LIMIT_MAX: z.coerce.number().optional().default(100),
   RATE_LIMIT_WINDOW: z.coerce.number().optional().default(900000), // 15 minutes
