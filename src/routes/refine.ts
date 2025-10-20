@@ -2,7 +2,7 @@
 import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { authMiddleware } from '../middleware/auth.js';
-import { refineSchemaWithOpenAI } from '../lib/openai.js';
+import { providerFactory } from '../lib/providers/factory.js';
 import type { RefinementRequest, RefinementResponse } from '../types/index.js';
 
 // Zod schema for request validation
@@ -29,17 +29,8 @@ export async function refineRoute(fastify: FastifyInstance) {
       // Validate request body
       const validatedRequest = RefinementRequestSchema.parse(request.body);
 
-      // Check if non-OpenAI provider is requested (not supported in MVP)
-      if (validatedRequest.options?.provider && validatedRequest.options.provider !== 'openai') {
-        return reply.code(400).send({
-          success: false,
-          error: `Provider "${validatedRequest.options.provider}" not supported yet. MVP supports OpenAI only.`,
-          errorCode: 'UNSUPPORTED_PROVIDER',
-        } as RefinementResponse);
-      }
-
-      // Call OpenAI for refinement
-      const result = await refineSchemaWithOpenAI(validatedRequest as RefinementRequest);
+      // Use provider factory for refinement (supports OpenAI, Anthropic, and auto fallback)
+      const result = await providerFactory.refineSchema(validatedRequest as RefinementRequest);
 
       const response: RefinementResponse = {
         success: true,
@@ -57,8 +48,8 @@ export async function refineRoute(fastify: FastifyInstance) {
         } as RefinementResponse);
       }
 
-      // Handle OpenAI API errors
-      if (error.message?.includes('OpenAI')) {
+      // Handle provider errors (OpenAI, Anthropic, or all providers failed)
+      if (error.message?.includes('API error') || error.message?.includes('provider')) {
         return reply.code(500).send({
           success: false,
           error: error.message,

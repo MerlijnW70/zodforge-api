@@ -42,6 +42,21 @@ const envSchema = z.object({
       { message: 'Invalid ZodForge API key format' }
     ),
 
+  // Anthropic API key (OPTIONAL - for Claude fallback)
+  ANTHROPIC_API_KEY: z
+    .string()
+    .min(40, 'Anthropic API key must be at least 40 characters')
+    .startsWith('sk-ant-', 'Anthropic API key must start with sk-ant-')
+    .optional()
+    .refine(
+      (key) => {
+        if (!key) return true; // Optional field
+        const validation = validateApiKeyFormat(key);
+        return validation.valid;
+      },
+      { message: 'Invalid Anthropic API key format' }
+    ),
+
   // Optional security settings
   RATE_LIMIT_MAX: z.coerce.number().optional().default(100),
   RATE_LIMIT_WINDOW: z.coerce.number().optional().default(900000), // 15 minutes
@@ -67,6 +82,12 @@ try {
   console.log('✅ Environment variables validated successfully');
   console.log('🔐 OpenAI API Key:', maskApiKey(parsedEnv.OPENAI_API_KEY));
   console.log('🔑 ZodForge API Key:', maskApiKey(parsedEnv.ZODFORGE_API_KEY));
+  if (parsedEnv.ANTHROPIC_API_KEY) {
+    console.log('🤖 Anthropic API Key:', maskApiKey(parsedEnv.ANTHROPIC_API_KEY));
+    console.log('   → Claude fallback enabled ✅');
+  } else {
+    console.log('🤖 Anthropic API Key: Not configured (Claude fallback disabled)');
+  }
   console.log('📊 Rate Limit:', `${parsedEnv.RATE_LIMIT_MAX} req/${parsedEnv.RATE_LIMIT_WINDOW}ms`);
   console.log('');
 } catch (error) {
@@ -79,7 +100,7 @@ try {
 
   // Show what environment variables are actually available (for debugging)
   const availableEnvVars = Object.keys(process.env).filter(key =>
-    ['NODE_ENV', 'OPENAI_API_KEY', 'ZODFORGE_API_KEY', 'PORT', 'HOST'].includes(key)
+    ['NODE_ENV', 'OPENAI_API_KEY', 'ZODFORGE_API_KEY', 'ANTHROPIC_API_KEY', 'PORT', 'HOST'].includes(key)
   );
   console.error('\n🔍 Available environment variables:', availableEnvVars.length > 0 ? availableEnvVars.join(', ') : 'NONE');
 

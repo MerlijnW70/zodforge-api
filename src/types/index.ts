@@ -40,7 +40,5 @@ export interface HealthCheckResponse {
   status: 'healthy' | 'degraded' | 'down';
   version: string;
   uptime: number;         // seconds
-  services: {
-    openai: 'up' | 'down' | 'unknown';
-  };
+  services: Record<string, 'up' | 'down'>; // Dynamic providers (openai, anthropic, etc.)
 }
