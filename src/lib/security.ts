@@ -2,6 +2,23 @@
 import crypto from 'crypto';
 
 /**
+ * Log security events for monitoring and auditing
+ */
+export function logSecurityEvent(
+  type: 'unauthorized' | 'invalid_key' | 'rate_limit' | 'suspicious_activity',
+  message: string,
+  severity: 'low' | 'medium' | 'high' = 'medium'
+): void {
+  const timestamp = new Date().toISOString();
+  const logLevel = severity === 'high' ? 'error' : severity === 'medium' ? 'warn' : 'info';
+
+  console[logLevel](`[SECURITY] [${type.toUpperCase()}] ${timestamp} - ${message}`);
+
+  // In production, you might want to send this to a security monitoring service
+  // e.g., Sentry, Datadog, CloudWatch, etc.
+}
+
+/**
  * Mask sensitive API keys in logs and error messages
  * Shows only first 7 and last 4 characters
  */

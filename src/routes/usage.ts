@@ -63,10 +63,11 @@ export async function usageRoute(fastify: FastifyInstance) {
       },
     });
 
-    logSecurityEvent('info', `Usage stats requested for tier: ${stats.tier}`, 'low');
+    // Log successful request (optional - can be removed if too verbose)
+    console.info(`[Usage API] Stats requested for tier: ${stats.tier}`);
   } catch (error) {
     console.error('[Usage API] Error fetching usage stats:', error);
-    logSecurityEvent('error', 'Exception in usage endpoint', 'high');
+    logSecurityEvent('suspicious_activity', 'Exception in usage endpoint', 'high');
 
     reply.status(500).send({
       error: 'Internal Server Error',

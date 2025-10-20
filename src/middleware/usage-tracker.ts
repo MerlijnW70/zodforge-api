@@ -182,17 +182,18 @@ export async function usageMiddleware(
   // Add usage info to request object for use in route handlers
   (request as any).usage = usage;
 
-  // Hook into response to track successful requests
-  reply.addHook('onSend', async (_request, _reply, payload) => {
-    const processingTime = Date.now() - startTime;
-    const success = _reply.statusCode >= 200 && _reply.statusCode < 400;
+  // Track usage after response is sent (using onResponse hook)
+  request.server.addHook('onResponse', async (req: any, rep: any) => {
+    // Only track for this specific request
+    if (req.id === request.id) {
+      const processingTime = Date.now() - startTime;
+      const success = rep.statusCode >= 200 && rep.statusCode < 400;
 
-    // Track usage asynchronously (don't block response)
-    trackUsage(apiKey, endpoint, success, processingTime).catch((err) => {
-      console.error('[Usage Tracker] Failed to track usage:', err);
-    });
-
-    return payload;
+      // Track usage asynchronously (don't block response)
+      trackUsage(apiKey, endpoint, success, processingTime).catch((err) => {
+        console.error('[Usage Tracker] Failed to track usage:', err);
+      });
+    }
   });
 }
 
