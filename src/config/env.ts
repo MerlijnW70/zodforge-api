@@ -3,7 +3,13 @@ import { z } from 'zod';
 import { config } from 'dotenv';
 import { maskApiKey, validateApiKeyFormat } from '../lib/security.js';
 
-config();
+// Only load .env file in development (Railway injects env vars directly)
+if (process.env.NODE_ENV !== 'production') {
+  config();
+  console.log('📁 Loaded .env file (development mode)');
+} else {
+  console.log('☁️  Using Railway environment variables (production mode)');
+}
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'staging', 'production']).default('development'),
@@ -70,7 +76,19 @@ try {
       console.error(`  - ${err.path.join('.')}: ${err.message}`);
     });
   }
-  console.error('\n💡 Check your .env file and compare with .env.example\n');
+
+  // Show what environment variables are actually available (for debugging)
+  const availableEnvVars = Object.keys(process.env).filter(key =>
+    ['NODE_ENV', 'OPENAI_API_KEY', 'ZODFORGE_API_KEY', 'PORT', 'HOST'].includes(key)
+  );
+  console.error('\n🔍 Available environment variables:', availableEnvVars.length > 0 ? availableEnvVars.join(', ') : 'NONE');
+
+  if (process.env.NODE_ENV === 'production') {
+    console.error('💡 In Railway: Go to Variables tab and add OPENAI_API_KEY and ZODFORGE_API_KEY');
+  } else {
+    console.error('💡 Locally: Check your .env file and compare with .env.example');
+  }
+  console.error('');
   process.exit(1);
 }
 
