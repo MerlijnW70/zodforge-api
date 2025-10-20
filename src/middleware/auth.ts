@@ -14,7 +14,7 @@ export async function authMiddleware(
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     securityAuditor.log(
       'auth_missing_header',
-      { ip: clientIp, path: request.url },
+      { requestId: request.id, ip: clientIp, path: request.url },
       'medium'
     );
 
@@ -36,6 +36,7 @@ export async function authMiddleware(
     securityAuditor.log(
       'auth_invalid_key',
       {
+        requestId: request.id,
         ip: clientIp,
         path: request.url,
         keyPrefix: maskApiKey(apiKey),
@@ -58,6 +59,7 @@ export async function authMiddleware(
     securityAuditor.log(
       'rate_limit_exceeded',
       {
+        requestId: request.id,
         ip: clientIp,
         path: request.url,
         resetTime: new Date(rateLimit.resetTime).toISOString(),
@@ -84,6 +86,7 @@ export async function authMiddleware(
   securityAuditor.log(
     'auth_success',
     {
+      requestId: request.id,
       ip: clientIp,
       path: request.url,
       remaining: rateLimit.remaining,

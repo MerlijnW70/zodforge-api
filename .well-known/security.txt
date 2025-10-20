@@ -1,0 +1,20 @@
+# This file complies with RFC 9116: https://www.rfc-editor.org/rfc/rfc9116.html
+
+Contact: mailto:merlinwhite@example.com
+Contact: https://github.com/MerlijnW70/zodforge-api/security/advisories
+Expires: 2026-10-21T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://zodforge.dev/.well-known/security.txt
+
+# Policy
+Policy: https://github.com/MerlijnW70/zodforge-api/blob/main/SECURITY.md
+
+# Acknowledgments
+Acknowledgments: https://github.com/MerlijnW70/zodforge-api/blob/main/SECURITY.md#recognition
+
+# Encryption
+# Our preferred communication is through GitHub Security Advisories (encrypted)
+# For PGP encrypted email, please request our public key
+
+# Hiring
+Hiring: https://github.com/MerlijnW70/zodforge-api/blob/main/CONTRIBUTING.md

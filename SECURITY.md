@@ -6,6 +6,64 @@ This document outlines the comprehensive security measures implemented to protec
 
 ---
 
+## 🛡️ Reporting Security Vulnerabilities
+
+**We take security seriously.** If you discover a security vulnerability in ZodForge API, please help us protect our users by following responsible disclosure practices.
+
+### How to Report
+
+**⚠️ DO NOT open a public GitHub issue for security vulnerabilities.**
+
+Instead, please report security issues privately by emailing:
+
+📧 **merlinwhite@example.com** (replace with your actual email)
+
+Or use GitHub's private vulnerability reporting:
+- Go to https://github.com/MerlijnW70/zodforge-api/security/advisories
+- Click "New draft security advisory"
+
+### What to Include
+
+Please provide:
+- **Description** of the vulnerability
+- **Steps to reproduce** the issue
+- **Potential impact** assessment
+- **Suggested fix** (if you have one)
+- **Your contact information** for follow-up
+
+### Our Commitment
+
+We will respond to your report within **48 hours** with:
+- ✅ Acknowledgment of your report
+- ✅ Assessment of severity (Critical, High, Medium, Low)
+- ✅ Timeline for patch development
+- ✅ Coordinated disclosure plan
+
+### Recognition
+
+Security researchers who responsibly disclose vulnerabilities will be:
+- ✅ Credited in release notes (if desired)
+- ✅ Listed in our Hall of Fame (with permission)
+- ✅ Thanked publicly (unless you prefer anonymity)
+
+### Scope
+
+**In scope**:
+- Authentication bypass
+- API key leakage
+- SQL injection
+- Rate limit bypass
+- Sensitive data exposure
+- Server-side vulnerabilities
+
+**Out of scope**:
+- Social engineering attacks
+- Denial of service (DDoS)
+- Issues in third-party dependencies (report to vendor)
+- Issues requiring physical access
+
+---
+
 ## 🛡️ Security Features Implemented
 
 ### 1. Environment Variable Protection ✅
