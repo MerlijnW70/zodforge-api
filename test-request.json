@@ -1,0 +1,45 @@
+{
+  "schema": {
+    "code": "z.object({\n  email: z.string(),\n  age: z.number(),\n  username: z.string(),\n  bio: z.string(),\n  website: z.string(),\n  status: z.string()\n})",
+    "typeName": "User",
+    "fields": {
+      "email": "z.string()",
+      "age": "z.number()",
+      "username": "z.string()",
+      "bio": "z.string()",
+      "website": "z.string()",
+      "status": "z.string()"
+    }
+  },
+  "samples": [
+    {
+      "email": "alice@example.com",
+      "age": 28,
+      "username": "alice123",
+      "bio": "Software engineer passionate about TypeScript and open source",
+      "website": "https://alice.dev",
+      "status": "active"
+    },
+    {
+      "email": "bob@test.org",
+      "age": 35,
+      "username": "bob_dev",
+      "bio": "Full-stack developer, tech blogger",
+      "website": "https://bobcodes.com",
+      "status": "active"
+    },
+    {
+      "email": "carol@company.io",
+      "age": 42,
+      "username": "carol_admin",
+      "bio": "DevOps engineer and cloud architect with 10+ years experience",
+      "website": "https://carol.tech",
+      "status": "inactive"
+    }
+  ],
+  "options": {
+    "provider": "openai",
+    "model": "gpt-4-turbo-preview",
+    "temperature": 0.2
+  }
+}
