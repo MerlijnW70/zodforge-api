@@ -32,3 +32,13 @@ Thumbs.db
 
 # Test coverage
 coverage/
+*.lcov
+
+# Temporary files
+*.tmp
+*.temp
+*-TEMP.md
+*-WIP.md
+test-*.json
+test-*.sh
+test-*.ps1
