@@ -58,7 +58,7 @@ jobs:
           ZODFORGE_API_KEY: ${{ secrets.ZODFORGE_API_KEY }}
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           file: ./coverage/coverage-final.json
           flags: unittests
