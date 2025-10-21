@@ -8,6 +8,7 @@ import { refineRoute } from './routes/refine.js';
 import { usageRoute } from './routes/usage.js';
 import { adminRoute } from './routes/admin.js';
 import { versionRoute } from './routes/version.js';
+import { apiKeysRoute } from './routes/api-keys.js';
 import { versioningMiddleware } from './middleware/versioning.js';
 import { securityAuditor } from './lib/security.js';
 
@@ -54,18 +55,25 @@ await server.register(refineRoute, { prefix: '/api/v1' });
 await server.register(usageRoute, { prefix: '/api/v1' });
 await server.register(adminRoute, { prefix: '/api/v1' });
 await server.register(versionRoute, { prefix: '/api/v1' });
+await server.register(apiKeysRoute, { prefix: '/api/v1' });
 
 // Root endpoint
 server.get('/', async (_request, _reply) => {
   return {
     name: 'ZodForge API',
-    version: '1.1.0',
+    version: '1.2.0',
     status: 'running',
     endpoints: {
       health: '/api/v1/health',
       version: '/api/v1/version',
       refine: '/api/v1/refine',
       admin: '/api/v1/admin/dashboard',
+      apiKeys: {
+        create: 'POST /api/v1/api-keys',
+        rotate: 'POST /api/v1/api-keys/:kid/rotate',
+        me: 'GET /api/v1/api-keys/me',
+        tiers: 'GET /api/v1/api-keys/tiers',
+      },
     },
     docs: 'https://docs.zodforge.com',
     changelog: 'https://github.com/MerlijnW70/zodforge-api/blob/main/CHANGELOG.md',
@@ -120,14 +128,14 @@ const start = async () => {
     console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   🚀 ZodForge API Server V2 - ENHANCED                    ║
+║   🚀 ZodForge API Server V2 - SECURITY ENHANCED           ║
 ║                                                           ║
 ║   Status:  Running                                        ║
-║   Version: 1.1.0 (stable)                                 ║
+║   Version: 1.2.0 (stable)                                 ║
 ║   Port:    ${env.PORT}                                            ║
 ║   Env:     ${env.NODE_ENV}                                    ║
 ║                                                           ║
-║   Endpoints:                                              ║
+║   Core Endpoints:                                         ║
 ║   GET  /                       - API info                 ║
 ║   GET  /api/v1/version         - Version info             ║
 ║   GET  /api/v1/health          - Health check             ║
@@ -135,15 +143,23 @@ const start = async () => {
 ║   GET  /api/v1/usage           - Usage statistics (🔒)    ║
 ║   GET  /api/v1/admin/dashboard - Admin dashboard (🔒)     ║
 ║                                                           ║
+║   API Key Management:                                     ║
+║   POST /api/v1/api-keys        - Create API key (admin)   ║
+║   POST /api/v1/api-keys/:kid/rotate - Rotate key          ║
+║   GET  /api/v1/api-keys/me     - Key info + usage         ║
+║   GET  /api/v1/api-keys/tiers  - Tier information         ║
+║                                                           ║
 ║   Enhanced Features:                                      ║
 ║   💾 Response Cache:  Enabled ✓                           ║
-║   ⏱️  Rate Limiting:   Per-Provider ✓                     ║
+║   ⏱️  Rate Limiting:   Per-Key + Provider ✓               ║
 ║   💰 Cost Tracking:   Enabled ✓                           ║
 ║   📊 Metrics:         Enabled ✓                           ║
-║   🏷️  Versioning:     Semantic (1.1.0) ✓                  ║
+║   🏷️  Versioning:     Semantic (1.2.0) ✓                  ║
 ║                                                           ║
-║   Security:                                               ║
-║   🔐 API Keys:        Protected ✓                         ║
+║   Security (NEW):                                         ║
+║   🔐 JWT Keys:        ${env.JWT_SECRET ? 'Enabled ✓' : 'Disabled ⚠️'}                        ║
+║   📝 Audit Logging:   ${env.AUDIT_LOGGING_ENABLED ? 'Enabled ✓' : 'Disabled'}                        ║
+║   🔒 Secrets Mgr:     ${env.SECRETS_PROVIDER} ✓                          ║
 ║   🛡️  Helmet:         Enabled ✓                           ║
 ║   🔑 API Auth:        Required ✓                          ║
 ║   📋 Changelog:       /CHANGELOG.md ✓                     ║

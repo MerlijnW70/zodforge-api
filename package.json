@@ -31,10 +31,18 @@
     "@supabase/supabase-js": "^2.76.0",
     "dotenv": "^17.2.3",
     "fastify": "^5.6.1",
+    "jsonwebtoken": "^9.0.2",
     "openai": "^6.6.0",
     "zod": "^4.1.12"
   },
+  "optionalDependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.620.0",
+    "@google-cloud/secret-manager": "^5.5.0",
+    "@azure/keyvault-secrets": "^4.8.0",
+    "@azure/identity": "^4.2.1"
+  },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^24.9.0",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",

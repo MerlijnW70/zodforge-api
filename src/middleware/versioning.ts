@@ -7,9 +7,9 @@ import { FastifyRequest, FastifyReply } from 'fastify';
  */
 export const API_VERSION = {
   major: 1,
-  minor: 1,
+  minor: 2,
   patch: 0,
-  full: '1.1.0',
+  full: '1.2.0',
   releaseDate: '2025-10-21',
   stability: 'stable' as const, // 'alpha' | 'beta' | 'rc' | 'stable'
 };
@@ -23,7 +23,7 @@ export const MIN_SUPPORTED_VERSION = '1.0.0';
 /**
  * Deprecated versions that will be removed soon
  */
-export const DEPRECATED_VERSIONS = ['1.0.0'];
+export const DEPRECATED_VERSIONS = ['1.0.0', '1.1.0'];
 
 /**
  * Version header names

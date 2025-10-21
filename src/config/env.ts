@@ -57,7 +57,7 @@ const envSchema = z.object({
       { message: 'Invalid Anthropic API key format' }
     ),
 
-  // Supabase (for usage tracking and customer management)
+  // Supabase (for audit logging, rate limiting, and customer management)
   SUPABASE_URL: z
     .string()
     .url('Supabase URL must be a valid URL')
@@ -67,6 +67,33 @@ const envSchema = z.object({
     .string()
     .min(100, 'Supabase service key must be at least 100 characters')
     .optional(),
+
+  // JWT Secret for API key signing (REQUIRED for JWT-based keys)
+  JWT_SECRET: z
+    .string()
+    .min(32, 'JWT secret must be at least 32 characters for security')
+    .optional(),
+
+  // Audit logging
+  AUDIT_LOGGING_ENABLED: z.coerce.boolean().optional().default(true),
+
+  // Secrets Manager configuration
+  SECRETS_PROVIDER: z
+    .enum(['env', 'aws', 'google', 'azure'])
+    .optional()
+    .default('env'),
+
+  // AWS Secrets Manager (optional)
+  AWS_REGION: z.string().optional(),
+  AWS_ACCESS_KEY_ID: z.string().optional(),
+  AWS_SECRET_ACCESS_KEY: z.string().optional(),
+
+  // Google Secret Manager (optional)
+  GCP_PROJECT_ID: z.string().optional(),
+  GOOGLE_APPLICATION_CREDENTIALS: z.string().optional(),
+
+  // Azure Key Vault (optional)
+  AZURE_KEY_VAULT_URL: z.string().url().optional(),
 
   // Optional security settings
   RATE_LIMIT_MAX: z.coerce.number().optional().default(100),
@@ -99,6 +126,29 @@ try {
   } else {
     console.log('🤖 Anthropic API Key: Not configured (Claude fallback disabled)');
   }
+
+  // Security configuration
+  if (parsedEnv.JWT_SECRET) {
+    console.log('🔒 JWT Secret:', maskApiKey(parsedEnv.JWT_SECRET));
+    console.log('   → JWT-based API keys enabled ✅');
+  } else {
+    console.log('🔒 JWT Secret: Not configured (legacy keys only)');
+  }
+
+  console.log('🔐 Secrets Provider:', parsedEnv.SECRETS_PROVIDER);
+
+  // Audit logging
+  if (parsedEnv.AUDIT_LOGGING_ENABLED) {
+    if (parsedEnv.SUPABASE_URL && parsedEnv.SUPABASE_SERVICE_KEY) {
+      console.log('📝 Audit Logging: Enabled ✅');
+      console.log('   → Supabase:', parsedEnv.SUPABASE_URL);
+    } else {
+      console.log('📝 Audit Logging: Enabled but Supabase not configured ⚠️');
+    }
+  } else {
+    console.log('📝 Audit Logging: Disabled');
+  }
+
   console.log('📊 Rate Limit:', `${parsedEnv.RATE_LIMIT_MAX} req/${parsedEnv.RATE_LIMIT_WINDOW}ms`);
   console.log('');
 } catch (error) {
