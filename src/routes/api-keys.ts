@@ -1,7 +1,7 @@
 // API Key management endpoints
 import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { createApiKey, getJwtKeyManager, JwtKeyManager, type ApiKeyPayload } from '../lib/jwt-keys.js';
+import { createApiKey, getJwtKeyManager, JwtKeyManager } from '../lib/jwt-keys.js';
 import { getAuditLogger } from '../lib/audit-logger.js';
 import { authMiddlewareV2 } from '../middleware/auth-v2.js';
 
@@ -26,7 +26,7 @@ export async function apiKeysRoute(fastify: FastifyInstance) {
         metadata: z.object({
           createdBy: z.string().optional(),
           environment: z.enum(['development', 'production']).optional(),
-          ipWhitelist: z.array(z.string().ip()).optional(),
+          ipWhitelist: z.array(z.string()).optional(),
         }).optional(),
       });
 
@@ -82,7 +82,7 @@ export async function apiKeysRoute(fastify: FastifyInstance) {
         return reply.code(400).send({
           success: false,
           error: 'Invalid request body',
-          details: error.errors,
+          details: error.issues,
           errorCode: 'VALIDATION_ERROR',
         });
       }

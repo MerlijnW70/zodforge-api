@@ -25,7 +25,7 @@ export async function adminRoute(fastify: FastifyInstance) {
   /**
    * GET /admin/dashboard - Complete system overview
    */
-  fastify.get('/admin/dashboard', async (request, reply) => {
+  fastify.get('/admin/dashboard', async (_request, reply) => {
     try {
       const allProviders = providerFactoryV2.getAllProviders();
       const config = configManager.getConfig();
@@ -79,7 +79,7 @@ export async function adminRoute(fastify: FastifyInstance) {
   /**
    * GET /admin/providers - List all providers with details
    */
-  fastify.get('/admin/providers', async (request, reply) => {
+  fastify.get('/admin/providers', async (_request, reply) => {
     try {
       const providers = providerFactoryV2.getAllProviders();
 
@@ -225,7 +225,7 @@ export async function adminRoute(fastify: FastifyInstance) {
         reply.code(400).send({
           success: false,
           error: 'Invalid configuration',
-          details: error.errors,
+          details: error.issues,
         });
       } else {
         fastify.log.error(error);
@@ -240,7 +240,7 @@ export async function adminRoute(fastify: FastifyInstance) {
   /**
    * GET /admin/cache/stats - Get cache statistics
    */
-  fastify.get('/admin/cache/stats', async (request, reply) => {
+  fastify.get('/admin/cache/stats', async (_request, reply) => {
     try {
       const stats = responseCache.getStats();
       reply.code(200).send({
@@ -259,7 +259,7 @@ export async function adminRoute(fastify: FastifyInstance) {
   /**
    * POST /admin/cache/clear - Clear response cache
    */
-  fastify.post('/admin/cache/clear', async (request, reply) => {
+  fastify.post('/admin/cache/clear', async (_request, reply) => {
     try {
       providerFactoryV2.clearCache();
       reply.code(200).send({
@@ -312,7 +312,7 @@ export async function adminRoute(fastify: FastifyInstance) {
   /**
    * GET /admin/costs/export - Export costs as CSV
    */
-  fastify.get('/admin/costs/export', async (request, reply) => {
+  fastify.get('/admin/costs/export', async (_request, reply) => {
     try {
       const csv = costTracker.exportCSV();
       reply
@@ -417,7 +417,7 @@ export async function adminRoute(fastify: FastifyInstance) {
   /**
    * GET /admin/health - Health check for all providers
    */
-  fastify.get('/admin/health', async (request, reply) => {
+  fastify.get('/admin/health', async (_request, reply) => {
     try {
       const health = await providerFactoryV2.checkAllProviders();
       const allHealthy = Object.values(health).every((h) => h === true);

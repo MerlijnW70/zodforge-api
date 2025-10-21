@@ -1,6 +1,5 @@
 // Comprehensive audit logging system
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import type { ApiKeyPayload } from './jwt-keys.js';
 
 /**
  * Audit log entry structure

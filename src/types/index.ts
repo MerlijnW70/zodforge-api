@@ -31,7 +31,7 @@ export interface RefinementResponse {
   creditsUsed?: number;     // Credits consumed (1 per request for MVP)
   creditsRemaining?: number; // Remaining monthly credits (unlimited for MVP)
   processingTime?: number;  // Milliseconds
-  aiProvider?: 'openai' | 'anthropic';
+  aiProvider?: 'openai' | 'anthropic' | 'mock';
   error?: string;
   errorCode?: string;
 }

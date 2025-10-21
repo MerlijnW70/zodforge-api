@@ -63,7 +63,7 @@ export class CostTracker {
    * Calculate cost based on token usage and provider rates
    */
   calculateCost(
-    provider: string,
+    _provider: string,
     inputTokens: number,
     outputTokens: number,
     costPerInputToken: number,

@@ -71,7 +71,7 @@ export class MockProvider implements AIProvider {
     return this.generateMockResponse(request);
   }
 
-  async *refineSchemaStream(request: RefinementRequest): AsyncIterableIterator<StreamChunk> {
+  async *refineSchemaStream(_request: RefinementRequest): AsyncIterableIterator<StreamChunk> {
     if (!this.config.enableStreaming) {
       throw new Error('Streaming not enabled for this mock provider');
     }
