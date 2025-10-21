@@ -6,6 +6,9 @@ import { env, getMaskedEnv } from './config/env.js';
 import { healthRoute } from './routes/health.js';
 import { refineRoute } from './routes/refine.js';
 import { usageRoute } from './routes/usage.js';
+import { adminRoute } from './routes/admin.js';
+import { versionRoute } from './routes/version.js';
+import { versioningMiddleware } from './middleware/versioning.js';
 import { securityAuditor } from './lib/security.js';
 
 const server = Fastify({
@@ -38,21 +41,34 @@ await server.register(cors, {
   origin: env.NODE_ENV === 'production' ? process.env.ALLOWED_ORIGINS?.split(',') || false : '*',
   credentials: true,
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Client-Version'],
+  exposedHeaders: ['X-API-Version', 'X-API-Min-Version', 'X-API-Deprecation', 'X-API-Sunset', 'X-API-Changelog'],
 });
+
+// Global versioning middleware - adds version headers to all responses
+server.addHook('preHandler', versioningMiddleware);
 
 // Routes
 await server.register(healthRoute, { prefix: '/api/v1' });
 await server.register(refineRoute, { prefix: '/api/v1' });
 await server.register(usageRoute, { prefix: '/api/v1' });
+await server.register(adminRoute, { prefix: '/api/v1' });
+await server.register(versionRoute, { prefix: '/api/v1' });
 
 // Root endpoint
 server.get('/', async (_request, _reply) => {
   return {
     name: 'ZodForge API',
-    version: '0.1.0',
+    version: '1.1.0',
     status: 'running',
-    docs: '/api/v1/health',
+    endpoints: {
+      health: '/api/v1/health',
+      version: '/api/v1/version',
+      refine: '/api/v1/refine',
+      admin: '/api/v1/admin/dashboard',
+    },
+    docs: 'https://docs.zodforge.com',
+    changelog: 'https://github.com/MerlijnW70/zodforge-api/blob/main/CHANGELOG.md',
   };
 });
 
@@ -104,24 +120,33 @@ const start = async () => {
     console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   🚀 ZodForge API Server (MVP) - SECURED                  ║
+║   🚀 ZodForge API Server V2 - ENHANCED                    ║
 ║                                                           ║
 ║   Status:  Running                                        ║
-║   Version: 0.1.0                                          ║
+║   Version: 1.1.0 (stable)                                 ║
 ║   Port:    ${env.PORT}                                            ║
 ║   Env:     ${env.NODE_ENV}                                    ║
 ║                                                           ║
 ║   Endpoints:                                              ║
 ║   GET  /                       - API info                 ║
+║   GET  /api/v1/version         - Version info             ║
 ║   GET  /api/v1/health          - Health check             ║
 ║   POST /api/v1/refine          - Schema refinement (🔒)   ║
 ║   GET  /api/v1/usage           - Usage statistics (🔒)    ║
+║   GET  /api/v1/admin/dashboard - Admin dashboard (🔒)     ║
+║                                                           ║
+║   Enhanced Features:                                      ║
+║   💾 Response Cache:  Enabled ✓                           ║
+║   ⏱️  Rate Limiting:   Per-Provider ✓                     ║
+║   💰 Cost Tracking:   Enabled ✓                           ║
+║   📊 Metrics:         Enabled ✓                           ║
+║   🏷️  Versioning:     Semantic (1.1.0) ✓                  ║
 ║                                                           ║
 ║   Security:                                               ║
-║   🔐 OpenAI API Key:  Protected ✓                         ║
-║   🔒 Rate Limiting:   ${env.RATE_LIMIT_MAX} req/15min ✓                    ║
+║   🔐 API Keys:        Protected ✓                         ║
 ║   🛡️  Helmet:         Enabled ✓                           ║
 ║   🔑 API Auth:        Required ✓                          ║
+║   📋 Changelog:       /CHANGELOG.md ✓                     ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
     `);

@@ -2,6 +2,15 @@
 import type { RefinementRequest, RefinementResponse } from '../../types/index.js';
 
 /**
+ * Streaming chunk for real-time responses
+ */
+export interface StreamChunk {
+  delta: string;
+  done: boolean;
+  metadata?: Record<string, any>;
+}
+
+/**
  * Base interface for all AI providers (OpenAI, Anthropic, etc.)
  */
 export interface AIProvider {
@@ -22,11 +31,31 @@ export interface AIProvider {
   ): Promise<Omit<RefinementResponse, 'success' | 'error' | 'errorCode'>>;
 
   /**
+   * Refine a schema with streaming support (optional)
+   *
+   * @param request - Schema refinement request with samples
+   * @returns Async iterator of streaming chunks
+   */
+  refineSchemaStream?(
+    request: RefinementRequest
+  ): AsyncIterableIterator<StreamChunk>;
+
+  /**
    * Check if the provider is available and healthy
    *
    * @returns True if provider is operational, false otherwise
    */
   checkHealth(): Promise<boolean>;
+
+  /**
+   * Get provider capabilities
+   */
+  getCapabilities?(): {
+    supportsStreaming: boolean;
+    supportsJsonMode: boolean;
+    supportsFunctionCalling: boolean;
+    supportsVision: boolean;
+  };
 }
 
 /**

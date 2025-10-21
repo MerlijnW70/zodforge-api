@@ -106,6 +106,15 @@ function escapeRegex(str: string): string {
 export class AnthropicProvider implements AIProvider {
   readonly name = 'anthropic';
 
+  getCapabilities() {
+    return {
+      supportsStreaming: true,
+      supportsJsonMode: false,
+      supportsFunctionCalling: true,
+      supportsVision: true,
+    };
+  }
+
   async refineSchema(
     request: RefinementRequest
   ): Promise<Omit<RefinementResponse, 'success' | 'error' | 'errorCode'>> {

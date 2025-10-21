@@ -101,6 +101,15 @@ function escapeRegex(str: string): string {
 export class OpenAIProvider implements AIProvider {
   readonly name = 'openai';
 
+  getCapabilities() {
+    return {
+      supportsStreaming: true,
+      supportsJsonMode: true,
+      supportsFunctionCalling: true,
+      supportsVision: false,
+    };
+  }
+
   async refineSchema(
     request: RefinementRequest
   ): Promise<Omit<RefinementResponse, 'success' | 'error' | 'errorCode'>> {

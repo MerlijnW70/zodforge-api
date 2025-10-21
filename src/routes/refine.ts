@@ -2,7 +2,7 @@
 import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { authMiddleware } from '../middleware/auth.js';
-import { providerFactory } from '../lib/providers/factory.js';
+import { providerFactoryV2 } from '../lib/providers/index.js';
 import type { RefinementRequest, RefinementResponse } from '../types/index.js';
 
 // Zod schema for request validation
@@ -29,8 +29,8 @@ export async function refineRoute(fastify: FastifyInstance) {
       // Validate request body
       const validatedRequest = RefinementRequestSchema.parse(request.body);
 
-      // Use provider factory for refinement (supports OpenAI, Anthropic, and auto fallback)
-      const result = await providerFactory.refineSchema(validatedRequest as RefinementRequest);
+      // Use enhanced provider factory V2 (with caching, rate limiting, cost tracking, and metrics)
+      const result = await providerFactoryV2.refineSchema(validatedRequest as RefinementRequest);
 
       const response: RefinementResponse = {
         success: true,
