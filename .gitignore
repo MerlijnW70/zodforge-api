@@ -42,3 +42,11 @@ coverage/
 test-*.json
 test-*.sh
 test-*.ps1
+
+# Security - never commit actual keys!
+ADMIN_KEY.txt
+
+# Temporary SQL files (keep migrations/)
+migration-to-run.sql
+fix-rate-limit.sql
+nul
