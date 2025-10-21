@@ -1,5 +1,5 @@
 {
-  "name": "@zodforge/cloud",
+  "name": "@merlijnw70/zodforge-cloud",
   "version": "1.0.0",
   "description": "Official TypeScript client for ZodForge Cloud API - AI-powered Zod schema refinement",
   "main": "dist/index.js",

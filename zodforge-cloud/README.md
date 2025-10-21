@@ -1,11 +1,11 @@
-# @zodforge/cloud
+# @merlijnw70/zodforge-cloud
 
 Official TypeScript SDK for [ZodForge Cloud API](https://zodforge.com) - AI-powered Zod schema refinement.
 
 ## Installation
 
 ```bash
-npm install @zodforge/cloud zod
+npm install @merlijnw70/zodforge-cloud zod
 ```
 
 ## Quick Start
@@ -13,7 +13,7 @@ npm install @zodforge/cloud zod
 ### Method 1: Client Instance (Recommended)
 
 ```typescript
-import { ZodForgeClient } from '@zodforge/cloud';
+import { ZodForgeClient } from '@merlijnw70/zodforge-cloud';
 
 const client = new ZodForgeClient({
   apiKey: 'zf_your_api_key_here'
@@ -38,7 +38,7 @@ console.log(result.refinedSchema.code);
 ### Method 2: Convenience Functions
 
 ```typescript
-import { refineSchema, setApiKey } from '@zodforge/cloud';
+import { refineSchema, setApiKey } from '@merlijnw70/zodforge-cloud';
 
 // Option 1: Set global API key
 setApiKey('zf_your_api_key_here');
@@ -216,7 +216,7 @@ const client = new ZodForgeClient({
 ### Error Handling
 
 ```typescript
-import { ZodForgeError } from '@zodforge/cloud';
+import { ZodForgeError } from '@merlijnw70/zodforge-cloud';
 
 try {
   const result = await client.refineSchema(request);
@@ -240,7 +240,7 @@ export ZODFORGE_API_KEY=zf_your_api_key_here
 Then use the SDK without passing the key:
 
 ```typescript
-import { refineSchema } from '@zodforge/cloud';
+import { refineSchema } from '@merlijnw70/zodforge-cloud';
 
 // API key loaded from ZODFORGE_API_KEY env var
 const result = await refineSchema({
@@ -263,7 +263,7 @@ import type {
   UsageStats,
   HealthCheckResponse,
   ZodForgeError
-} from '@zodforge/cloud';
+} from '@merlijnw70/zodforge-cloud';
 ```
 
 ## Examples
