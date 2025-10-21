@@ -1,7 +1,7 @@
 // AI schema refinement endpoint
 import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { authMiddleware } from '../middleware/auth.js';
+import { authMiddlewareV2 as authMiddleware } from '../middleware/auth-v2.js';
 import { providerFactoryV2 } from '../lib/providers/index.js';
 import type { RefinementRequest, RefinementResponse } from '../types/index.js';
 
