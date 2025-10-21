@@ -20,7 +20,7 @@ if (env.ANTHROPIC_API_KEY) {
   console.log('⚠️  Anthropic API key not provided - Claude fallback disabled');
 }
 
-const SYSTEM_PROMPT = `You are an expert TypeScript and Zod schema developer. Your task is to analyze a Zod schema and suggest improvements based on sample data.
+const SYSTEM_PROMPT = `You are an expert TypeScript and Zod schema developer with semantic analysis capabilities. Your task is to analyze a Zod schema and suggest improvements based on sample data.
 
 **Goals**:
 1. Make types more accurate and specific
@@ -28,12 +28,29 @@ const SYSTEM_PROMPT = `You are an expert TypeScript and Zod schema developer. Yo
 3. Improve validation rules based on business logic
 4. Detect enums where appropriate
 5. Add transformations for data normalization
+6. **Detect field relationships** (e.g., price+currency, lat+lng, street+city+postalCode)
+7. **Identify semantic patterns** beyond simple regex matching
+
+**Advanced Analysis - Context Reasoning**:
+- Detect composite schemas: price+currency → monetary value, lat+lng → geolocation
+- Identify missing fields in common patterns (e.g., createdAt without updatedAt)
+- Recognize domain relationships that suggest nested structures
+- Suggest composite types when fields are semantically related
+- Only suggest relationships with confidence >85%
+
+**Enhanced Explainability**:
+For each improvement, provide:
+1. **reason**: Why this change improves the schema
+2. **sourceSnippet**: Actual sample value that triggered this change (e.g., "user@Example.COM")
+3. **detectedPattern**: Pattern identifier (e.g., "email_format", "uuid_v4", "iso8601_datetime", "monetary_value")
+4. **ruleApplied**: Validation rule used (e.g., "RFC5322_email", "UUID_v4_regex", "ISO8601_datetime_format")
 
 **Rules**:
 - Only suggest changes with high confidence (>80%)
+- Only suggest relationships with confidence >85%
 - Preserve existing valid constraints
 - Consider real-world data patterns
-- Explain reasoning for each change
+- Explain reasoning for each change with source attribution
 - Use standard Zod validators
 
 **Output Format** (JSON only, no markdown):
@@ -44,7 +61,18 @@ const SYSTEM_PROMPT = `You are an expert TypeScript and Zod schema developer. Yo
       "before": "z.string()",
       "after": "z.string().email().toLowerCase().trim()",
       "reason": "Field name and samples indicate email addresses. Added normalization.",
-      "confidence": 0.95
+      "confidence": 0.95,
+      "sourceSnippet": "user@Example.COM",
+      "detectedPattern": "email_format",
+      "ruleApplied": "RFC5322_email"
+    }
+  ],
+  "relationships": [
+    {
+      "fields": ["price", "currency"],
+      "pattern": "monetary_value",
+      "suggestion": "Consider creating a Money type: z.object({ amount: z.number().positive(), currency: z.enum(['USD', 'EUR', 'GBP']) })",
+      "confidence": 0.92
     }
   ],
   "suggestions": [
@@ -198,6 +226,7 @@ export class AnthropicProvider implements AIProvider {
           code: refinedCode,
           improvements: parsed.improvements || [],
           confidence: averageConfidence,
+          relationships: parsed.relationships || [],
         },
         suggestions: parsed.suggestions || [],
         creditsUsed: 1,
